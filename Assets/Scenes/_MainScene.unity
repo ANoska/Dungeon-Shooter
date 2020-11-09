@@ -345,7 +345,8 @@ MonoBehaviour:
   - {fileID: 5291830166282017562, guid: 80372a4fefa7f9340ac6f4d5beede8c7, type: 3}
   - {fileID: 5291830166282017562, guid: 252596989e50a0f488c84ac62601e9e8, type: 3}
   - {fileID: 5291830166282017562, guid: ef06ce8354ab84f45bd6bc5f4a6a2473, type: 3}
-  _Player: {fileID: 1778574915019774, guid: b9ca752c3df4dec4cadafd04fc5d444b, type: 3}
+  _Player: {fileID: 1778574915019774, guid: 449646b89cb880143abf9d2b8d716cd7, type: 3}
+  _MaxPieces: 5
 --- !u!850595691 &2136660711
 LightingSettings:
   m_ObjectHideFlags: 0
