@@ -7255,8 +7255,8 @@ GameObject:
   - component: {fileID: 82931547174934612}
   - component: {fileID: 114985937948325432}
   m_Layer: 8
-  m_Name: Assault_Rifle_01_FPSController
-  m_TagString: Untagged
+  m_Name: Modified-Assault_Rifle_01_FPSController
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
