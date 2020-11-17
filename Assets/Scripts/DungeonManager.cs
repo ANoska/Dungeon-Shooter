@@ -8,11 +8,12 @@ public class DungeonManager : MonoBehaviour
 
     [Header("Set in Inspector")]
     public GameObject[] _DungeonPieces;
+    public GameObject[] _EnemeyPieces;
     public GameObject _PlayerPrefab;
+    
     public int _PieceLength = 8;
 
     [Header("Set Dynamically")]
-    public LinkedList<GameObject> _ActivePieces;
     public GameObject _Player;
 
     #endregion
@@ -21,6 +22,7 @@ public class DungeonManager : MonoBehaviour
 
     private const int SETTING_MAX_PIECES = 7;
     private const string TAG_DUNGEON_PIECE = "DungeonPiece";
+    private const string GAME_OBJECT_NAME_ZOMBIE_SPAWN_POINT = "EnemySpawnPoint";
     private const string GAME_OBJECT_NAME_LOAD_TRIGGER_PLUS = "LoadTrigger_Plus";
     private const string GAME_OBJECT_NAME_LOAD_TRIGGER_MINUS = "LoadTrigger_Minus";
     private const string GAME_OBJECT_NAME_SMOKE_PARENT_PLUS = "SmokeParent_Plus";
@@ -29,6 +31,8 @@ public class DungeonManager : MonoBehaviour
     #endregion
 
     #region Private Members
+
+    private LinkedList<GameObject> _ActivePieces;
 
     #endregion
 
@@ -94,6 +98,39 @@ public class DungeonManager : MonoBehaviour
 
     #region Environment Updates
 
+    private void UpdateDungeon(string direction)
+    {
+        GameObject go;
+        switch (direction)
+        {
+            case GAME_OBJECT_NAME_LOAD_TRIGGER_MINUS:
+                Destroy(_ActivePieces.Last.Value);
+                _ActivePieces.RemoveLast();
+
+                go = Instantiate(_DungeonPieces[Random.Range(0, _DungeonPieces.Length)], _ActivePieces.First.Value.transform.position - new Vector3(8, 0, 0), Quaternion.identity);
+                foreach (DungeonPieceLoadTrigger lt in go.GetComponentsInChildren<DungeonPieceLoadTrigger>())
+                {
+                    lt.OnDungeonPieceLoadTriggerPlayerCollision += LtOnDungeonPieceLoadTriggerPlayerCollision;
+                }
+                SpawnZombie(go);
+                _ActivePieces.AddFirst(go);
+                break;
+
+            case GAME_OBJECT_NAME_LOAD_TRIGGER_PLUS:
+                Destroy(_ActivePieces.First.Value);
+                _ActivePieces.RemoveFirst();
+
+                go = Instantiate(_DungeonPieces[Random.Range(0, _DungeonPieces.Length)], _ActivePieces.Last.Value.transform.position + new Vector3(8, 0, 0), Quaternion.identity);
+                foreach (DungeonPieceLoadTrigger lt in go.GetComponentsInChildren<DungeonPieceLoadTrigger>())
+                {
+                    lt.OnDungeonPieceLoadTriggerPlayerCollision += LtOnDungeonPieceLoadTriggerPlayerCollision;
+                }
+                SpawnZombie(go);
+                _ActivePieces.AddLast(go);
+                break;
+        }
+    }
+
     private void UpdateSmoke()
     {
         foreach (GameObject piece in _ActivePieces)
@@ -133,39 +170,18 @@ public class DungeonManager : MonoBehaviour
         }
     }
 
+    private void SpawnZombie(GameObject location)
+    {
+        Instantiate(_EnemeyPieces[Random.Range(0, _EnemeyPieces.Length)], location.transform.Find(GAME_OBJECT_NAME_ZOMBIE_SPAWN_POINT).transform.position, Quaternion.identity);
+    }
+
     #endregion
 
     #region Load Trigger Callbacks
 
     private void LtOnDungeonPieceLoadTriggerPlayerCollision(object sender, string loadTriggerName)
     {
-        GameObject go;
-        switch (loadTriggerName)
-        {
-            case GAME_OBJECT_NAME_LOAD_TRIGGER_MINUS:
-                Destroy(_ActivePieces.Last.Value);
-                _ActivePieces.RemoveLast();
-
-                go = Instantiate(_DungeonPieces[Random.Range(0, _DungeonPieces.Length)], _ActivePieces.First.Value.transform.position - new Vector3(8, 0, 0), Quaternion.identity);
-                foreach(DungeonPieceLoadTrigger lt in go.GetComponentsInChildren<DungeonPieceLoadTrigger>())
-                {
-                    lt.OnDungeonPieceLoadTriggerPlayerCollision += LtOnDungeonPieceLoadTriggerPlayerCollision;
-                }
-                _ActivePieces.AddFirst(go);
-                break;
-
-            case GAME_OBJECT_NAME_LOAD_TRIGGER_PLUS:
-                Destroy(_ActivePieces.First.Value);
-                _ActivePieces.RemoveFirst();
-
-                go = Instantiate(_DungeonPieces[Random.Range(0, _DungeonPieces.Length)], _ActivePieces.Last.Value.transform.position + new Vector3(8, 0, 0), Quaternion.identity);
-                foreach (DungeonPieceLoadTrigger lt in go.GetComponentsInChildren<DungeonPieceLoadTrigger>())
-                {
-                    lt.OnDungeonPieceLoadTriggerPlayerCollision += LtOnDungeonPieceLoadTriggerPlayerCollision;
-                }
-                _ActivePieces.AddLast(go);
-                break;
-        }
+        UpdateDungeon(loadTriggerName);
     }
 
     #endregion
