@@ -76,10 +76,6 @@ public class DungeonManager : MonoBehaviour
         {
             int nextPiece = Random.Range(0, _DungeonPieces.Length);
             previousPiece = Instantiate(_DungeonPieces[nextPiece], previousPiece.transform.position + pieceOffset, Quaternion.identity);
-            foreach(DungeonPieceLoadTrigger lt in previousPiece.GetComponentsInChildren<DungeonPieceLoadTrigger>())
-            {
-                lt.OnDungeonPieceLoadTriggerPlayerCollision += LtOnDungeonPieceLoadTriggerPlayerCollision;
-            }
             
             _ActivePieces.AddLast(previousPiece);
         }
@@ -108,10 +104,6 @@ public class DungeonManager : MonoBehaviour
                 _ActivePieces.RemoveLast();
 
                 go = Instantiate(_DungeonPieces[Random.Range(0, _DungeonPieces.Length)], _ActivePieces.First.Value.transform.position - new Vector3(8, 0, 0), Quaternion.identity);
-                foreach (DungeonPieceLoadTrigger lt in go.GetComponentsInChildren<DungeonPieceLoadTrigger>())
-                {
-                    lt.OnDungeonPieceLoadTriggerPlayerCollision += LtOnDungeonPieceLoadTriggerPlayerCollision;
-                }
                 SpawnZombie(go);
                 _ActivePieces.AddFirst(go);
                 break;
@@ -121,10 +113,6 @@ public class DungeonManager : MonoBehaviour
                 _ActivePieces.RemoveFirst();
 
                 go = Instantiate(_DungeonPieces[Random.Range(0, _DungeonPieces.Length)], _ActivePieces.Last.Value.transform.position + new Vector3(8, 0, 0), Quaternion.identity);
-                foreach (DungeonPieceLoadTrigger lt in go.GetComponentsInChildren<DungeonPieceLoadTrigger>())
-                {
-                    lt.OnDungeonPieceLoadTriggerPlayerCollision += LtOnDungeonPieceLoadTriggerPlayerCollision;
-                }
                 SpawnZombie(go);
                 _ActivePieces.AddLast(go);
                 break;
@@ -179,7 +167,7 @@ public class DungeonManager : MonoBehaviour
 
     #region Load Trigger Callbacks
 
-    private void LtOnDungeonPieceLoadTriggerPlayerCollision(object sender, string loadTriggerName)
+    public void LoadTriggerPlayerCollision(string loadTriggerName)
     {
         UpdateDungeon(loadTriggerName);
     }
