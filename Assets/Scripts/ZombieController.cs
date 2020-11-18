@@ -13,17 +13,66 @@ public class ZombieController : MonoBehaviour
     // Animation controller
     private Animator _Animator;
 
+    private bool m_IsWalking;
+    private bool m_IsRunning;
+    private bool m_IsAttacking;
+    private bool m_IsAlive;
+
     // Walking animation
-    private bool _IsWalking;
+    private bool _IsWalking 
+    {
+        get { return m_IsWalking; }
+        set
+        {
+            if (m_IsWalking == value)
+                return;
+
+            m_IsWalking = value;
+            _Animator.SetBool("Walk", m_IsWalking);
+        }
+    }
 
     // Running animation
-    private bool _IsRunning;
+    private bool _IsRunning
+    {
+        get { return m_IsRunning; }
+        set
+        {
+            if (m_IsRunning == value)
+                return;
+
+            m_IsRunning = value;
+            _Animator.SetBool("Run", m_IsRunning);
+        }
+    }
 
     // Attack animation
-    private bool _IsAttacking;
+    private bool _IsAttacking
+    {
+        get { return m_IsAttacking; }
+        set
+        {
+            if (m_IsAttacking == value)
+                return;
+
+            m_IsAttacking = value;
+            _Animator.SetBool("Attack", m_IsAttacking);
+        }
+    }
 
     // Death animation when set to false;
-    private bool _IsAlive;
+    private bool _IsAlive
+    {
+        get { return m_IsAlive; }
+        set
+        {
+            if (m_IsAlive == value)
+                return;
+
+            m_IsAlive = value;
+            _Animator.SetBool("Alive", m_IsAlive);
+        }
+    }
 
     private const string ANIMATION_WALK_NAME = "Z_Walk_InPlace";
     private const string ANIMATION_RUN_NAME = "Z_Run_InPlace";
@@ -50,11 +99,27 @@ public class ZombieController : MonoBehaviour
 
     #endregion
 
+    #region Health members
+
+    private int _Health;
+
+    private const int HEALTH_INIT_VALUE = 3;
+
+    #endregion
+
+    #region Unity Messages
+
     void Awake()
     {
-        _IsAlive = true;
-        _MovementSpeed = IDLE_SPEED;
+        // Animation init
         _Animator = GetComponent<Animator>();
+        _IsAlive = true;
+
+        // Movement init
+        _MovementSpeed = IDLE_SPEED;
+
+        // Health init
+        _Health = HEALTH_INIT_VALUE;
     }
 
     // Start is called before the first frame update
@@ -70,20 +135,30 @@ public class ZombieController : MonoBehaviour
         UpdateRotation();
     }
 
+    #endregion
+
+    #region Update Methods
+
     private void UpdatePosition()
     {
+        if (!_IsAlive)
+            return;
+
         transform.position 
             = Vector3.Lerp(transform.position, new Vector3(_Target.transform.position.x, transform.position.y, _Target.transform.position.z), Time.deltaTime * _MovementSpeed);
     }
 
     private void UpdateRotation()
     {
+        if (!_IsAlive)
+            return;
+
         _DirectionRotation = (new Vector3(_Target.transform.position.x, transform.position.y, _Target.transform.position.z) - transform.position).normalized;
         _LookRotation = Quaternion.LookRotation(_DirectionRotation);
         transform.rotation = Quaternion.Slerp(transform.rotation, _LookRotation, Time.deltaTime * _RotationSpeed);
     }
 
-    void UpdateAnimations()
+    private void UpdateAnimations()
     {
         if (_IsAlive)
         {
@@ -96,11 +171,6 @@ public class ZombieController : MonoBehaviour
                 _IsAttacking = false;
                 _MovementSpeed = WALKING_SPEED;
 
-                _Animator.SetBool("Alive", _IsAlive);
-                _Animator.SetBool("Walk", _IsWalking);
-                _Animator.SetBool("Run", _IsRunning);
-                _Animator.SetBool("Attack", _IsAttacking);
-
                 _Animator.Play(ANIMATION_WALK_NAME);
             }
             else if (_DistanceToTarget <= 15 && _DistanceToTarget > 3)
@@ -109,11 +179,6 @@ public class ZombieController : MonoBehaviour
                 _IsRunning = true;
                 _IsAttacking = false;
                 _MovementSpeed = RUNNING_SPEED;
-
-                _Animator.SetBool("Alive", _IsAlive);
-                _Animator.SetBool("Walk", _IsWalking);
-                _Animator.SetBool("Run", _IsRunning);
-                _Animator.SetBool("Attack", _IsAttacking);
 
                 _Animator.Play(ANIMATION_RUN_NAME);
             }
@@ -124,28 +189,33 @@ public class ZombieController : MonoBehaviour
                 _IsAttacking = true;
                 _MovementSpeed = _DistanceToTarget <= 1.5 ? IDLE_SPEED : ATTACK_SPEED;
 
-                _Animator.SetBool("Alive", _IsAlive);
-                _Animator.SetBool("Walk", _IsWalking);
-                _Animator.SetBool("Run", _IsRunning);
-                _Animator.SetBool("Attack", _IsAttacking);
-
                 _Animator.Play(ANIMATION_ATTACK_NAME);
             }
         }
-        else
+        
+        if(_IsAlive && _Health <= 0)
         {
+            _IsAlive = false;
             _IsWalking = false;
             _IsRunning = false;
             _IsAttacking = false;
             _MovementSpeed = IDLE_SPEED;
 
-
-            _Animator.SetBool("Alive", _IsAlive);
-            _Animator.SetBool("Walk", _IsWalking);
-            _Animator.SetBool("Run", _IsRunning);
-            _Animator.SetBool("Attack", _IsAttacking);
-
             _Animator.Play(ANIMATION_DEATH_NAME);
+            Invoke("OnCompletedDeathAnimation", 1.2f);
         }
+    }
+
+    // Runs after the death animation is completed.
+    private void OnCompletedDeathAnimation()
+    {
+        Destroy(gameObject);
+    }
+
+    #endregion
+
+    public void BulletCollision()
+    {
+        _Health--;
     }
 }

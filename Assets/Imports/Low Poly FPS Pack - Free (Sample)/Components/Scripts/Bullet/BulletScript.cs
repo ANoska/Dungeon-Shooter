@@ -68,6 +68,12 @@ public class BulletScript : MonoBehaviour {
 			//Destroy bullet object
 			Destroy(gameObject);
 		}
+
+		if (collision.transform.tag == "Zombie")
+        {
+			collision.transform.gameObject.GetComponent<ZombieController>().BulletCollision();
+			Destroy(gameObject);
+        }
 	}
 
 	private IEnumerator DestroyTimer () 
