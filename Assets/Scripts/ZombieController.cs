@@ -103,7 +103,7 @@ public class ZombieController : MonoBehaviour
 
     private int _Health;
 
-    private const int HEALTH_INIT_VALUE = 3;
+    private const int HEALTH_INIT_VALUE = 1;
 
     #endregion
 
@@ -201,14 +201,33 @@ public class ZombieController : MonoBehaviour
             _IsAttacking = false;
             _MovementSpeed = IDLE_SPEED;
 
+            StartCoroutine(BloodSpray());
+            
             _Animator.Play(ANIMATION_DEATH_NAME);
-            Invoke("OnCompletedDeathAnimation", 1.2f);
+            StartCoroutine(OnDeathAnimation());
         }
     }
 
-    // Runs after the death animation is completed.
-    private void OnCompletedDeathAnimation()
+    private IEnumerator BloodSpray()
     {
+        var fx = transform.Find("BloodSprayFX").gameObject;
+        fx.SetActive(true);
+
+        yield return new WaitForSeconds(.25f);
+
+        fx.SetActive(false);
+    }
+
+    private IEnumerator OnDeathAnimation()
+    {
+        var fx = transform.Find("ChunkParticleSystem").gameObject;
+
+        yield return new WaitForSeconds(0.8f);
+
+        fx.SetActive(true);
+
+        yield return new WaitForSeconds(0.4f);
+
         Destroy(gameObject);
     }
 
