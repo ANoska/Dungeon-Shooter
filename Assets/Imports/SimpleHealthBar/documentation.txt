@@ -1,0 +1,34 @@
+Thanks so much for downloading Simple Healthbars FREE!
+
+The setup is really simple, but I'll walk you through it anyways:
+1) Open up the scene where you would like to use the healthbar.
+2) Drag in any one of the 6 different styles of healthbars from the "HealthbarPrefabs" folder.
+3) Customize the settings of your script to perfectly accommodate to your needs!
+
+And boom! You're already done with setting up Codiscite's new asset!
+We have some more information for the nerd-ier types like myself:
+
+---
+--- Accessing the Player's Health From Another Script 
+---
+1) You can do this by creating a new variable at the start of your script to hold the Healthbar script data: "public Healthbar healthbarScript;"
+2) In the editor, assign the healthbarScript variable to the object that has the Healthbar script.
+3) Now, anytime you want to access the player's health, just do: "healthbarScript.health".
+
+---
+--- Healthbar Colors
+---
+On the script you can adjust 3 health color values: low, medium and high. Every frame, the Healthbar script will update the color of the health depending on how much health the player has:
+
+- If their health is less that the 'lowHealth' variable and greater than the 'minimumHealth' variable, it will set the color to the lowHealthColor or a variant of that.
+
+- If their health is less that the 'highHealth' variable and greater than the 'lowHealth' variable, it will set the color to the mediumHealthColor or a variant of that.
+
+- If their health is less that the 'maximumHealth' variable and greater than the 'highHealth' variable, it will set the color to the highHealthColor or a variant of that.
+
+
+
+You can find out more information by checking the Healthbar script comments.
+
+Best regards,
+Codiscite Team
