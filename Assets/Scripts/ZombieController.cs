@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FPSControllerLPFP;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -225,6 +226,8 @@ public class ZombieController : MonoBehaviour
 
     private IEnumerator OnDeathAnimation()
     {
+        GameObject.FindGameObjectWithTag("Player").GetComponent<FpsControllerLPFP>().ZombieKilledByPlayer();
+
         var fx = transform.Find("ChunkParticleSystem").gameObject;
 
         yield return new WaitForSeconds(0.8f);

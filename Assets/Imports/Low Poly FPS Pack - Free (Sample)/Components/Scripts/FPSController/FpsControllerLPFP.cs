@@ -71,6 +71,12 @@ namespace FPSControllerLPFP
         public Button mainMenuButton;
         public bool isDead;
 
+        [Header("Score")]
+        public Text scoreText;
+        private int _CurrentScore;
+        private int _HighScore;
+        private const string HIGH_SCORE_PLAYER_PREF_KEY = "_ATN_dungeon_shooter_high_score";
+
 #pragma warning restore 649
 
         private Rigidbody _rigidbody;
@@ -91,6 +97,10 @@ namespace FPSControllerLPFP
         {
             playAgainButton.onClick.AddListener(() => SceneManager.LoadScene("_MainScene"));
             mainMenuButton.onClick.AddListener(() => SceneManager.LoadScene("_MenuScene"));
+            _CurrentScore = 0;
+            _HighScore = PlayerPrefs.HasKey(HIGH_SCORE_PLAYER_PREF_KEY) ? PlayerPrefs.GetInt(HIGH_SCORE_PLAYER_PREF_KEY) : 0;
+            UpdateScoreText();
+
             _rigidbody = GetComponent<Rigidbody>();
             _rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
             _collider = GetComponent<CapsuleCollider>();
@@ -357,6 +367,27 @@ namespace FPSControllerLPFP
 
             _takingDamage = false;
             _audioSource.Pause();
+        }
+
+        public void ZombieKilledByPlayer()
+        {
+            _CurrentScore += 100;
+            UpdateHighScore();
+            UpdateScoreText();
+        }
+
+        private void UpdateHighScore()
+        {
+            if (_CurrentScore <= _HighScore)
+                return;
+
+            PlayerPrefs.SetInt(HIGH_SCORE_PLAYER_PREF_KEY, _CurrentScore);
+            _HighScore = PlayerPrefs.GetInt(HIGH_SCORE_PLAYER_PREF_KEY);
+        }
+
+        private void UpdateScoreText()
+        {
+            scoreText.text = string.Format("HighScore: {0}\nScore: {1}", _HighScore, _CurrentScore);
         }
 
         /// A helper for assistance with smoothing the camera rotation.
