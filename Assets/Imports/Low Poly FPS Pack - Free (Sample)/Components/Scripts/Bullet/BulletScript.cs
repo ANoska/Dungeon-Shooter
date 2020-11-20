@@ -71,6 +71,10 @@ public class BulletScript : MonoBehaviour {
 
 		if (collision.transform.tag == "Zombie")
         {
+			// Don't care if we hit the attack hit box
+			if (collision.collider.GetType() == typeof(CapsuleCollider))
+				return;
+
 			collision.transform.gameObject.GetComponent<ZombieController>().BulletCollision();
 			Destroy(gameObject);
         }

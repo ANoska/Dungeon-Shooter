@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace FPSControllerLPFP
 {
@@ -24,6 +27,9 @@ namespace FPSControllerLPFP
 
         [Tooltip("The audio clip that is played while running."), SerializeField]
         private AudioClip runningSound;
+
+        [Tooltip("The audio clip that is played when damage is taken"), SerializeField]
+        private AudioClip damageSound;
 
 		[Header("Movement Settings")]
         [Tooltip("How fast the player moves while walking and strafing."), SerializeField]
@@ -55,6 +61,16 @@ namespace FPSControllerLPFP
 
         [Tooltip("The names of the axes and buttons for Unity's Input Manager."), SerializeField]
         private FpsInput input;
+
+        [Header("Healthbar")]
+        public Healthbar healthbarScript;
+
+        [Header("DeathPanel")]
+        public RectTransform deathPanel;
+        public Button playAgainButton;
+        public Button mainMenuButton;
+        public bool isDead;
+
 #pragma warning restore 649
 
         private Rigidbody _rigidbody;
@@ -65,6 +81,7 @@ namespace FPSControllerLPFP
         private SmoothVelocity _velocityX;
         private SmoothVelocity _velocityZ;
         private bool _isGrounded;
+        private bool _takingDamage;
 
         private readonly RaycastHit[] _groundCastResults = new RaycastHit[8];
         private readonly RaycastHit[] _wallCastResults = new RaycastHit[8];
@@ -72,6 +89,8 @@ namespace FPSControllerLPFP
         /// Initializes the FpsController on start.
         private void Start()
         {
+            playAgainButton.onClick.AddListener(() => SceneManager.LoadScene("_MainScene"));
+            mainMenuButton.onClick.AddListener(() => SceneManager.LoadScene("_MenuScene"));
             _rigidbody = GetComponent<Rigidbody>();
             _rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
             _collider = GetComponent<CapsuleCollider>();
@@ -116,7 +135,7 @@ namespace FPSControllerLPFP
         }
 			
         /// Checks if the character is on the ground.
-        private void OnCollisionStay()
+        private void OnCollisionStay(Collision collision)
         {
             var bounds = _collider.bounds;
             var extents = bounds.extents;
@@ -130,11 +149,41 @@ namespace FPSControllerLPFP
             }
 
             _isGrounded = true;
+
+            if (_takingDamage || isDead)
+                return;
+
+            if (collision.collider.tag == "Zombie")
+            {
+                // Don't care if we hit the bullet hit box
+                if (collision.collider.GetType() == typeof(BoxCollider))
+                    return;
+
+                TakeDamange();
+            }
+        }
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            if (_takingDamage || isDead)
+                return;
+
+            if (collision.collider.tag == "Zombie")
+            {
+                // Don't care if we hit the bullet hit box
+                if (collision.collider.GetType() == typeof(BoxCollider))
+                    return;
+
+                TakeDamange();
+            }
         }
 			
         /// Processes the character movement and the camera rotation every fixed framerate frame.
         private void FixedUpdate()
         {
+            if (isDead)
+                return;
+
             // FixedUpdate is used instead of Update because this code is dealing with physics and smoothing.
             RotateCameraAndCharacter();
             MoveCharacter();
@@ -144,9 +193,33 @@ namespace FPSControllerLPFP
         /// Moves the camera to the character, processes jumping and plays sounds every frame.
         private void Update()
         {
+            if (isDead)
+                return;
+
 			arms.position = transform.position + transform.TransformVector(armPosition);
             Jump();
             PlayFootstepSounds();
+        }
+
+        private void TakeDamange()
+        {
+            healthbarScript.TakeDamage(UnityEngine.Random.Range(10, 25));
+            StartCoroutine(PlayDamageSound());
+
+            // if player died
+            if (healthbarScript.health <= healthbarScript.minimumHealth)
+            {
+                Die();
+            }
+        }
+
+        private void Die()
+        {
+            isDead = true;
+            deathPanel.gameObject.SetActive(true);
+
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
         }
 
         private void RotateCameraAndCharacter()
@@ -254,6 +327,9 @@ namespace FPSControllerLPFP
 
         private void PlayFootstepSounds()
         {
+            if (_takingDamage)
+                return;
+
             if (_isGrounded && _rigidbody.velocity.sqrMagnitude > 0.1f)
             {
                 _audioSource.clip = input.Run ? runningSound : walkingSound;
@@ -270,7 +346,19 @@ namespace FPSControllerLPFP
                 }
             }
         }
-			
+
+        private IEnumerator PlayDamageSound()
+        {
+            _takingDamage = true;
+            _audioSource.clip = damageSound;
+            _audioSource.Play();
+
+            yield return new WaitForSeconds(damageSound.length);
+
+            _takingDamage = false;
+            _audioSource.Pause();
+        }
+
         /// A helper for assistance with smoothing the camera rotation.
         private class SmoothRotation
         {
