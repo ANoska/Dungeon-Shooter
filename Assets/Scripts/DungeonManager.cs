@@ -44,10 +44,13 @@ public class DungeonManager : MonoBehaviour
     {
         _ActivePieces = new LinkedList<GameObject>();
 
+        // Spawn initial prefabs
         InitializeDungeon();
         InitializePlayer();
+        // Calculate effects & triggers
         UpdateSmoke();
         UpdateLoadTriggers();
+        // Couroutine for spawning mass amounts of enemies periodically
         StartCoroutine(SpawnZombieHorde());
     }
 
