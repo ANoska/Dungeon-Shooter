@@ -4,6 +4,11 @@ This repo contains the source code for a Unity game project I made called Dugeon
 
 I had a lot of fun making this project and learned a lot about the game design and development process.
 
+The game is heavily optimized to be a standalone desktop application, however I did build for WebGL as well and it certainly is pushing the limits there.
+
+WebGL build of the game is currently live here: https://simmer.io/@austino/dungeon-shooter
+A Zipped Windows build of the game is here: https://drive.google.com/file/d/1rL_dwXVv9NRKwU7FNoxye9Fxq2s7Zz8e/view?usp=sharing
+
 ## Game Design
 
 This is a simple fps game where you run around and shoot zombies that are trying to eat you!
