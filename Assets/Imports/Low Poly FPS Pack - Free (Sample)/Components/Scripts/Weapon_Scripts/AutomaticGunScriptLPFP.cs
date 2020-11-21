@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using FPSControllerLPFP;
 
 // ----- Low Poly FPS Pack Free Version -----
 public class AutomaticGunScriptLPFP : MonoBehaviour {
@@ -53,7 +54,7 @@ public class AutomaticGunScriptLPFP : MonoBehaviour {
 	private bool isReloading;
 
 	//Holstering weapon
-	private bool hasBeenHolstered = false;
+	private bool hasBeenHolstered;// = false;
 	//If weapon is holstered
 	private bool holstered;
 	//Check if running
@@ -118,6 +119,7 @@ public class AutomaticGunScriptLPFP : MonoBehaviour {
 	public Text currentWeaponText;
 	public Text currentAmmoText;
 	public Text totalAmmoText;
+	public RawImage crosshair;
 
 	[System.Serializable]
 	public class prefabs
@@ -185,7 +187,11 @@ public class AutomaticGunScriptLPFP : MonoBehaviour {
 	}
 
 	private void LateUpdate () {
-		
+
+		// Dont update if the player is dead.
+		if (GameObject.FindGameObjectWithTag("Player").GetComponent<FpsControllerLPFP>().isDead)
+			return;
+
 		//Weapon sway
 		if (weaponSway == true) 
 		{
@@ -207,6 +213,10 @@ public class AutomaticGunScriptLPFP : MonoBehaviour {
 	
 	private void Update () {
 
+		// Dont update if the player is dead.
+		if (GameObject.FindGameObjectWithTag("Player").GetComponent<FpsControllerLPFP>().isDead)
+			return;
+
 		//Aiming
 		//Toggle camera FOV when right click is held down
 		if(Input.GetButton("Fire2") && !isReloading && !isRunning && !isInspecting) 
@@ -215,6 +225,8 @@ public class AutomaticGunScriptLPFP : MonoBehaviour {
 			isAiming = true;
 			//Start aiming
 			anim.SetBool ("Aim", true);
+			//Disable crosshair
+			crosshair.gameObject.SetActive(false);
 
 			//When right click is released
 			gunCamera.fieldOfView = Mathf.Lerp(gunCamera.fieldOfView,
@@ -237,6 +249,9 @@ public class AutomaticGunScriptLPFP : MonoBehaviour {
 			isAiming = false;
 			//Stop aiming
 			anim.SetBool ("Aim", false);
+
+			//Enable crosshair
+			crosshair.gameObject.SetActive(true);
 				
 			soundHasPlayed = false;
 		}
@@ -248,37 +263,37 @@ public class AutomaticGunScriptLPFP : MonoBehaviour {
 			randomMuzzleflashValue = Random.Range (minRandomValue, maxRandomValue);
 		}
 
-		//Timescale settings
-		//Change timescale to normal when 1 key is pressed
-		if (Input.GetKeyDown (KeyCode.Alpha1)) 
-		{
-			Time.timeScale = 1.0f;
-			timescaleText.text = "1.0";
-		}
-		//Change timesccale to 50% when 2 key is pressed
-		if (Input.GetKeyDown (KeyCode.Alpha2)) 
-		{
-			Time.timeScale = 0.5f;
-			timescaleText.text = "0.5";
-		}
-		//Change timescale to 25% when 3 key is pressed
-		if (Input.GetKeyDown (KeyCode.Alpha3)) 
-		{
-			Time.timeScale = 0.25f;
-			timescaleText.text = "0.25";
-		}
-		//Change timescale to 10% when 4 key is pressed
-		if (Input.GetKeyDown (KeyCode.Alpha4)) 
-		{
-			Time.timeScale = 0.1f;
-			timescaleText.text = "0.1";
-		}
-		//Pause game when 5 key is pressed
-		if (Input.GetKeyDown (KeyCode.Alpha5)) 
-		{
-			Time.timeScale = 0.0f;
-			timescaleText.text = "0.0";
-		}
+		////Timescale settings
+		////Change timescale to normal when 1 key is pressed
+		//if (Input.GetKeyDown (KeyCode.Alpha1)) 
+		//{
+		//	Time.timeScale = 1.0f;
+		//	timescaleText.text = "1.0";
+		//}
+		////Change timesccale to 50% when 2 key is pressed
+		//if (Input.GetKeyDown (KeyCode.Alpha2)) 
+		//{
+		//	Time.timeScale = 0.5f;
+		//	timescaleText.text = "0.5";
+		//}
+		////Change timescale to 25% when 3 key is pressed
+		//if (Input.GetKeyDown (KeyCode.Alpha3)) 
+		//{
+		//	Time.timeScale = 0.25f;
+		//	timescaleText.text = "0.25";
+		//}
+		////Change timescale to 10% when 4 key is pressed
+		//if (Input.GetKeyDown (KeyCode.Alpha4)) 
+		//{
+		//	Time.timeScale = 0.1f;
+		//	timescaleText.text = "0.1";
+		//}
+		////Pause game when 5 key is pressed
+		//if (Input.GetKeyDown (KeyCode.Alpha5)) 
+		//{
+		//	Time.timeScale = 0.0f;
+		//	timescaleText.text = "0.0";
+		//}
 
 		//Set current ammo text from ammo int
 		currentAmmoText.text = currentAmmo.ToString ();
@@ -287,24 +302,24 @@ public class AutomaticGunScriptLPFP : MonoBehaviour {
 		//is currently playing
 		AnimationCheck ();
 
-		//Play knife attack 1 animation when Q key is pressed
-		if (Input.GetKeyDown (KeyCode.Q) && !isInspecting) 
-		{
-			anim.Play ("Knife Attack 1", 0, 0f);
-		}
-		//Play knife attack 2 animation when F key is pressed
-		if (Input.GetKeyDown (KeyCode.F) && !isInspecting) 
-		{
-			anim.Play ("Knife Attack 2", 0, 0f);
-		}
+		////Play knife attack 1 animation when Q key is pressed
+		//if (Input.GetKeyDown (KeyCode.Q) && !isInspecting) 
+		//{
+		//	anim.Play ("Knife Attack 1", 0, 0f);
+		//}
+		////Play knife attack 2 animation when F key is pressed
+		//if (Input.GetKeyDown (KeyCode.F) && !isInspecting) 
+		//{
+		//	anim.Play ("Knife Attack 2", 0, 0f);
+		//}
 			
-		//Throw grenade when pressing G key
-		if (Input.GetKeyDown (KeyCode.G) && !isInspecting) 
-		{
-			StartCoroutine (GrenadeSpawnDelay ());
-			//Play grenade throw animation
-			anim.Play("GrenadeThrow", 0, 0.0f);
-		}
+		////Throw grenade when pressing G key
+		//if (Input.GetKeyDown (KeyCode.G) && !isInspecting) 
+		//{
+		//	StartCoroutine (GrenadeSpawnDelay ());
+		//	//Play grenade throw animation
+		//	anim.Play("GrenadeThrow", 0, 0.0f);
+		//}
 
 		//If out of ammo
 		if (currentAmmo == 0) 
@@ -420,40 +435,40 @@ public class AutomaticGunScriptLPFP : MonoBehaviour {
 			}
 		}
 
-		//Inspect weapon when T key is pressed
-		if (Input.GetKeyDown (KeyCode.T)) 
-		{
-			anim.SetTrigger ("Inspect");
-		}
+		////Inspect weapon when T key is pressed
+		//if (Input.GetKeyDown (KeyCode.T)) 
+		//{
+		//	anim.SetTrigger ("Inspect");
+		//}
 
-		//Toggle weapon holster when E key is pressed
-		if (Input.GetKeyDown (KeyCode.E) && !hasBeenHolstered) 
-		{
-			holstered = true;
+		////Toggle weapon holster when E key is pressed
+		//if (Input.GetKeyDown (KeyCode.E) && !hasBeenHolstered) 
+		//{
+		//	holstered = true;
 
-			mainAudioSource.clip = SoundClips.holsterSound;
-			mainAudioSource.Play();
+		//	mainAudioSource.clip = SoundClips.holsterSound;
+		//	mainAudioSource.Play();
 
-			hasBeenHolstered = true;
-		} 
-		else if (Input.GetKeyDown (KeyCode.E) && hasBeenHolstered) 
-		{
-			holstered = false;
+		//	hasBeenHolstered = true;
+		//} 
+		//else if (Input.GetKeyDown (KeyCode.E) && hasBeenHolstered) 
+		//{
+		//	holstered = false;
 
-			mainAudioSource.clip = SoundClips.takeOutSound;
-			mainAudioSource.Play ();
+		//	mainAudioSource.clip = SoundClips.takeOutSound;
+		//	mainAudioSource.Play ();
 
-			hasBeenHolstered = false;
-		}
+		//	hasBeenHolstered = false;
+		//}
 		//Holster anim toggle
-		if (holstered == true) 
-		{
-			anim.SetBool ("Holster", true);
-		} 
-		else 
-		{
-			anim.SetBool ("Holster", false);
-		}
+		//if (holstered == true) 
+		//{
+		//	anim.SetBool ("Holster", true);
+		//} 
+		//else 
+		//{
+		//	anim.SetBool ("Holster", false);
+		//}
 
 		//Reload 
 		if (Input.GetKeyDown (KeyCode.R) && !isReloading && !isInspecting) 

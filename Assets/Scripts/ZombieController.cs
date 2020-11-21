@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FPSControllerLPFP;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -85,17 +86,18 @@ public class ZombieController : MonoBehaviour
 
     [Header("MUST SET")]
     public float _RotationSpeed;
-    public float _DistanceToTarget;
+    
     [Header("SET DYNAMICALLY")]
     public float _MovementSpeed;
+    public float _DistanceToTarget;
 
     private Quaternion _LookRotation;
     private Vector3 _DirectionRotation;
 
     private const float IDLE_SPEED = 0.0f;
-    private const float WALKING_SPEED = 0.2f;
+    private const float WALKING_SPEED = 0.4f;
     private const float RUNNING_SPEED = 0.7f;
-    private const float ATTACK_SPEED = 0.3f;
+    private const float ATTACK_SPEED = 0.65f;
 
     #endregion
 
@@ -195,6 +197,10 @@ public class ZombieController : MonoBehaviour
         
         if(_IsAlive && _Health <= 0)
         {
+            // Disable colliders on death
+            this.GetComponent<BoxCollider>().enabled = false;
+            this.GetComponent<CapsuleCollider>().enabled = false;
+
             _IsAlive = false;
             _IsWalking = false;
             _IsRunning = false;
@@ -220,6 +226,8 @@ public class ZombieController : MonoBehaviour
 
     private IEnumerator OnDeathAnimation()
     {
+        GameObject.FindGameObjectWithTag("Player").GetComponent<FpsControllerLPFP>().ZombieKilledByPlayer();
+
         var fx = transform.Find("ChunkParticleSystem").gameObject;
 
         yield return new WaitForSeconds(0.8f);
