@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -47,6 +48,7 @@ public class DungeonManager : MonoBehaviour
         InitializePlayer();
         UpdateSmoke();
         UpdateLoadTriggers();
+        StartCoroutine(SpawnZombieHorde());
     }
 
     // Update is called once per frame
@@ -161,6 +163,21 @@ public class DungeonManager : MonoBehaviour
     private void SpawnZombie(GameObject location)
     {
         Instantiate(_EnemeyPieces[Random.Range(0, _EnemeyPieces.Length)], location.transform.Find(GAME_OBJECT_NAME_ZOMBIE_SPAWN_POINT).transform.position, Quaternion.identity);
+    }
+
+    private IEnumerator SpawnZombieHorde()
+    {
+        yield return new WaitForSeconds(20f);
+
+        while (true)
+        {
+            foreach (GameObject piece in _ActivePieces)
+            {
+                SpawnZombie(piece);
+            }
+
+            yield return new WaitForSeconds(Random.Range(20, 30));
+        }
     }
 
     #endregion
