@@ -191,6 +191,15 @@ public class DungeonManager : MonoBehaviour
             }
 
             yield return new WaitForSeconds(Random.Range(20, 30));
+
+            foreach (GameObject piece in _ActivePieces)
+            {
+                SpawnZombie(piece);
+                yield return new WaitForSeconds(.25f);
+                SpawnZombie(piece);
+            }
+
+            yield return new WaitForSeconds(Random.Range(10, 20));
         }
     }
 
