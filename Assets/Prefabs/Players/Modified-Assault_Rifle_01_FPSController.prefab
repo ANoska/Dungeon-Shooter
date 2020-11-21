@@ -7428,7 +7428,7 @@ MonoBehaviour:
   runningSpeed: 9
   movementSmoothness: 0.125
   jumpForce: 35
-  mouseSensitivity: 7
+  mouseSensitivity: 3
   rotationSmoothness: 0.05
   minVerticalAngle: -90
   maxVerticalAngle: 90
