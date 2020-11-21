@@ -28,6 +28,8 @@ public class DungeonManager : MonoBehaviour
     private const string GAME_OBJECT_NAME_LOAD_TRIGGER_MINUS = "LoadTrigger_Minus";
     private const string GAME_OBJECT_NAME_SMOKE_PARENT_PLUS = "SmokeParent_Plus";
     private const string GAME_OBJECT_NAME_SMOKE_PARENT_MINUS = "SmokeParent_Minus";
+    private const string GAME_OBJECT_NAME_PORTAL_PARENT_PLUS = "PortalParent_Plus";
+    private const string GAME_OBJECT_NAME_PORTAL_PARENT_MINUS = "PortalParent_Minus";
 
     #endregion
 
@@ -48,7 +50,7 @@ public class DungeonManager : MonoBehaviour
         InitializeDungeon();
         InitializePlayer();
         // Calculate effects & triggers
-        UpdateSmoke();
+        UpdatePortals();
         UpdateLoadTriggers();
         // Couroutine for spawning mass amounts of enemies periodically
         StartCoroutine(SpawnZombieHorde());
@@ -57,7 +59,7 @@ public class DungeonManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        UpdateSmoke();
+        UpdatePortals();
         UpdateLoadTriggers();
     }
 
@@ -124,7 +126,7 @@ public class DungeonManager : MonoBehaviour
         }
     }
 
-    private void UpdateSmoke()
+    private void UpdatePortals()
     {
         foreach (GameObject piece in _ActivePieces)
         {
@@ -132,16 +134,25 @@ public class DungeonManager : MonoBehaviour
             {
                 piece.transform.Find(GAME_OBJECT_NAME_SMOKE_PARENT_PLUS).gameObject.SetActive(true);
                 piece.transform.Find(GAME_OBJECT_NAME_SMOKE_PARENT_MINUS).gameObject.SetActive(false);
+
+                piece.transform.Find(GAME_OBJECT_NAME_PORTAL_PARENT_PLUS).gameObject.SetActive(true);
+                piece.transform.Find(GAME_OBJECT_NAME_PORTAL_PARENT_MINUS).gameObject.SetActive(false);
             }
             else if (_ActivePieces.Last.Value == piece)
             {
                 piece.transform.Find(GAME_OBJECT_NAME_SMOKE_PARENT_PLUS).gameObject.SetActive(false);
                 piece.transform.Find(GAME_OBJECT_NAME_SMOKE_PARENT_MINUS).gameObject.SetActive(true);
+
+                piece.transform.Find(GAME_OBJECT_NAME_PORTAL_PARENT_PLUS).gameObject.SetActive(false);
+                piece.transform.Find(GAME_OBJECT_NAME_PORTAL_PARENT_MINUS).gameObject.SetActive(true);
             }
             else
             {
                 piece.transform.Find(GAME_OBJECT_NAME_SMOKE_PARENT_PLUS).gameObject.SetActive(false);
                 piece.transform.Find(GAME_OBJECT_NAME_SMOKE_PARENT_MINUS).gameObject.SetActive(false);
+
+                piece.transform.Find(GAME_OBJECT_NAME_PORTAL_PARENT_PLUS).gameObject.SetActive(false);
+                piece.transform.Find(GAME_OBJECT_NAME_PORTAL_PARENT_MINUS).gameObject.SetActive(false);
             }
         }
     }
@@ -183,6 +194,11 @@ public class DungeonManager : MonoBehaviour
         }
     }
 
+    private void UpdatePlayerPositionAfterPortal()
+    {
+        _Player.transform.position = _ActivePieces.ElementAt((int)Mathf.Floor(SETTING_MAX_PIECES / 2)).transform.position + new Vector3(0, 2, 0);
+    }
+
     #endregion
 
     #region Load Trigger Callbacks
@@ -190,6 +206,18 @@ public class DungeonManager : MonoBehaviour
     public void LoadTriggerPlayerCollision(string loadTriggerName)
     {
         UpdateDungeon(loadTriggerName);
+    }
+
+    public void PortalTriggerPlayerCollision()
+    {
+        foreach (GameObject piece in _ActivePieces)
+        {
+            Destroy(piece);
+        }
+        _ActivePieces.Clear();
+
+        InitializeDungeon();
+        UpdatePlayerPositionAfterPortal();
     }
 
     #endregion

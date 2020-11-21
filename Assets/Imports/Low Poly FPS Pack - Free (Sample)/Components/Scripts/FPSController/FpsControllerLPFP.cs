@@ -226,6 +226,7 @@ namespace FPSControllerLPFP
         private void Die()
         {
             isDead = true;
+            GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
             deathPanel.gameObject.SetActive(true);
 
             Cursor.visible = true;
