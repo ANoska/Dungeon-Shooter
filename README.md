@@ -7,7 +7,10 @@ I had a lot of fun making this project and learned a lot about the game design a
 The game is heavily optimized to be a standalone desktop application, however I did build for WebGL as well and it certainly is pushing the limits there.
 
 WebGL build of the game is currently live here: https://simmer.io/@austino/dungeon-shooter
+
 A Zipped Windows build of the game is here: https://drive.google.com/file/d/1rL_dwXVv9NRKwU7FNoxye9Fxq2s7Zz8e/view?usp=sharing
+
+Youtube video demo - https://youtu.be/49oymqJse2s
 
 ## Game Design
 
