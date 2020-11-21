@@ -53,7 +53,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5291830166282017562, guid: 91339de40c7f73148a86b97a21bace8c, type: 3}
       propertyPath: m_Name
-      value: _DungeonPiece_00
+      value: _DungeonPiece_02
+      objectReference: {fileID: 0}
+    - target: {fileID: 5540374558699923867, guid: 91339de40c7f73148a86b97a21bace8c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 91339de40c7f73148a86b97a21bace8c, type: 3}

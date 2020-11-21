@@ -932,6 +932,30 @@ PrefabInstance:
       propertyPath: m_Name
       value: _DungeonPiece_01
       objectReference: {fileID: 0}
+    - target: {fileID: 5540374558699923867, guid: 91339de40c7f73148a86b97a21bace8c, type: 3}
+      propertyPath: m_RootOrder
+      value: 43
+      objectReference: {fileID: 0}
+    - target: {fileID: 5540374558699923867, guid: 91339de40c7f73148a86b97a21bace8c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5540374558699923867, guid: 91339de40c7f73148a86b97a21bace8c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8035859652401420046, guid: 91339de40c7f73148a86b97a21bace8c, type: 3}
+      propertyPath: m_RootOrder
+      value: 42
+      objectReference: {fileID: 0}
+    - target: {fileID: 8213834999223575367, guid: 91339de40c7f73148a86b97a21bace8c, type: 3}
+      propertyPath: m_RootOrder
+      value: 41
+      objectReference: {fileID: 0}
+    - target: {fileID: 8700957445696679963, guid: 91339de40c7f73148a86b97a21bace8c, type: 3}
+      propertyPath: m_RootOrder
+      value: 40
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 91339de40c7f73148a86b97a21bace8c, type: 3}
 --- !u!4 &2896834044490387056 stripped
