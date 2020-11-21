@@ -9,6 +9,7 @@ TagManager:
   - ExplosiveBarrel
   - DungeonPiece
   - Zombie
+  - NowPlaying
   layers:
   - Default
   - TransparentFX
